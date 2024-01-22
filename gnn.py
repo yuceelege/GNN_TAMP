@@ -27,7 +27,9 @@ class GNNModel(torch.nn.Module):
         x = F.sigmoid(self.out(x))
         return x
     
-def online_train(model, optimizer, criterion, new_graph_data, batch_size=1):
+def online_train(model, lr, new_graph_data, batch_size=1):
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    criterion = torch.nn.MSELoss()
     model.train()
     for graph in DataLoader(new_graph_data, batch_size=batch_size):
         out = model(graph)
