@@ -6,7 +6,7 @@ import numpy as np
 import networkx as nx
 
 
-def run_inference_and_reduce_graph(target_folder,model):
+def create_plan(target_folder,model):
     target_graphs, positions = process_all_g_files(target_folder)
     target_pyg = [convert_to_pyg_data(graph) for graph in target_graphs][0]
     original_indices = list(range(target_pyg.num_nodes))
@@ -26,7 +26,7 @@ def run_inference_and_reduce_graph(target_folder,model):
             remaining_node_original_index = original_indices[0]
             removal_order.append(remaining_node_original_index)
 
-    return removal_order
+    return removal_order[::-1]
 
 def remove_node_and_edges(data, node_idx):
     # Create a mask for the nodes to keep

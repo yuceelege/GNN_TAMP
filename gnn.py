@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.nn import MessagePassing
 from torch.nn import Sequential as Seq, Linear, ReLU, BatchNorm1d
+from torch_geometric.data import *
 
 class CustomEdgeConv(MessagePassing):
     def __init__(self, in_channels, out_channels):
@@ -25,3 +26,12 @@ class GNNModel(torch.nn.Module):
         x = self.conv1(x, edge_index, edge_attr)
         x = F.sigmoid(self.out(x))
         return x
+    
+def online_train(model, optimizer, criterion, new_graph_data, batch_size=1):
+    model.train()
+    for graph in DataLoader(new_graph_data, batch_size=batch_size):
+        out = model(graph)
+        loss = criterion(out, graph.y.view(-1, 1))
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
